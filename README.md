@@ -1,25 +1,36 @@
-# Zero-Waste Meal Planner
+# 🥗 Zero Waste Meal Planner
 
-An AI-powered web application that helps users plan meals based on available ingredients, reducing food waste and promoting sustainable eating habits.
+A smart and sustainable web app that helps users reduce food waste by recommending recipes based on available ingredients. Built with Flask, NLP, and the Spoonacular API, it supports fuzzy ingredient matching and tracks how much food waste is saved.
 
-## 🌟 Features
+## 🌱 Features
 
-- 🧠 AI-driven recipe suggestions based on ingredients you already have
-- 📊 Tracks and analyzes food waste reduction
-- 📅 Meal planning calendar
-- 📋 Grocery management
+- 🔍 Ingredient-Based Recipe Suggestions 
+   Enter leftover ingredients and get recipe suggestions instantly.
 
-## 💻 Tech Stack
+- 🧠 Natural Language Processing (NLP)  
+   Uses spaCy to intelligently extract ingredient names from messy or unstructured input.
 
+- 🍽️ Fuzzy Ingredient Matching 
+   Misspelled or vague ingredient names are intelligently corrected using FuzzyWuzzy.
+
+- 🧾 Waste Tracking System  
+  Tracks how much food waste you’ve saved (in grams) based on ingredient usage.
+
+- 🖼️ Clean UI  
+  Simple, responsive web interface for entering ingredients and viewing recipe suggestions.
+
+## 🔧 Technologies Used
+
+- Backend: Python, Flask, spaCy, Requests, FuzzyWuzzy
 - Frontend: HTML, CSS, JavaScript
-- Backend: Python / Flask 
-- ML/AI: Food classification, recipe generation
+- API: [Spoonacular API](https://spoonacular.com/food-api)
 
-## 🚀 How to Run
+  
+## 🚀 Getting Started
 
+#. Clone the Repository
 ```bash
-# Clone the repository
-git clone https://github.com/Sowmya-K-20/zero-waste-meal-planner.git
+git clone https://github.com/Jithi2004/Zero-Waste-Meal-Planner.git
 
 # Navigate into the project directory
 cd zero-waste-meal-planner
@@ -29,3 +40,8 @@ pip install -r requirements.txt
 
 # Run the application
 python app.py
+
+🙌 Acknowledgements
+-Spoonacular API
+-spaCy NLP
+-FuzzyWuzzy
