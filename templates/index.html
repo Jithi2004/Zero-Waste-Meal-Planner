@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Waste Meal Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🥗 Zero Waste Meal Planner</h1>
+        <input type="text" id="ingredients" placeholder="Enter ingredients, comma-separated">
+        <div class="button-group">
+            <button onclick="getRecipes()">Get Recipes</button>
+            <button onclick="trackWaste()">Track Waste Saved</button>
+        </div>
+        <p id="waste-status"></p>
+        <div id="recipes" class="recipes-grid"></div>
+    </div>
+
+    <script>
+        async function getRecipes() {
+            const ingredients = document.getElementById("ingredients").value;
+
+            const response = await fetch("/get_recipes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ingredients })
+            });
+
+            const recipes = await response.json();
+            const recipesDiv = document.getElementById("recipes");
+            recipesDiv.innerHTML = "";
+
+            if (recipes.length > 0) {
+                recipes.forEach(recipe => {
+                    const recipeElement = document.createElement("div");
+                    recipeElement.className = "recipe-card";
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image}" alt="${recipe.title}">
+                        <div class="recipe-content">
+                            <h3>${recipe.title}</h3>
+                            <p>Used: ${recipe.usedIngredientCount} | Missing: ${recipe.missedIngredientCount}</p>
+                            <button onclick="viewRecipe(${recipe.id})">View Details</button>
+                        </div>
+                    `;
+                    recipesDiv.appendChild(recipeElement);
+                });
+            } else {
+                recipesDiv.innerHTML = "<p class='no-recipes'>No recipes found.</p>";
+            }
+        }
+
+        async function viewRecipe(recipeId) {
+            const response = await fetch(`/recipe/${recipeId}`);
+            const recipe = await response.json();
+
+            const recipesDiv = document.getElementById("recipes");
+            recipesDiv.innerHTML = `
+                <div class="recipe-details">
+                    <h2>${recipe.title}</h2>
+                    <p><strong>Ready in:</strong> ${recipe.readyInMinutes} mins</p>
+                    <p><strong>Servings:</strong> ${recipe.servings}</p>
+                    <h3>Ingredients:</h3>
+                    <ul>${recipe.extendedIngredients.map(ing => `<li>${ing.original}</li>`).join("")}</ul>
+                    <h3>Instructions:</h3>
+                    <p>${recipe.instructions || "No instructions provided."}</p>
+                    <a href="${recipe.sourceUrl}" target="_blank">View Full Recipe</a>
+                    <br><br>
+                    <button onclick="location.reload()">⬅ Back</button>
+                </div>
+            `;
+        }
+
+        async function trackWaste() {
+            const ingredientsInput = document.getElementById("ingredients").value;
+            const ingredients = ingredientsInput.split(",").map(ing => ing.trim()).filter(Boolean);
+
+            const status = document.getElementById("waste-status");
+
+            if (ingredients.length === 0) {
+                status.textContent = "⚠️ Please enter ingredients first.";
+                return;
+            }
+
+            const response = await fetch("/track_waste", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: "user123",
+                    ingredients: ingredients
+                })
+            });
+
+            const result = await response.json();
+            status.textContent = `✅ ${result.message} ~ ${result.estimated_grams_saved}g saved today. Total today: ${result.total_today}g`;
+        }
+    </script>
+</body>
+</html>
